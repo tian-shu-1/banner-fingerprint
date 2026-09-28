@@ -54,6 +54,19 @@ func TestFingerprintExamples(t *testing.T) {
 		{"mariadb", model.Item{IP: "1.2.3.33", Port: 3306, Banner: "J\x00\x00\x00\n5.5.5-10.11.2-MariaDB-1:10.11.2+maria~ubu2204\x00"}, "MySQL", "MariaDB", "10.11.2", ""},
 		{"openssh windows", model.Item{IP: "1.2.3.34", Port: 22, Banner: "SSH-2.0-OpenSSH_for_Windows_8.1"}, "SSH", "OpenSSH", "8.1", "Windows"},
 		{"mysql bare version", model.Item{IP: "1.2.3.35", Port: 3306, Banner: "8.0.36\x00"}, "MySQL", "MySQL", "8.0.36", ""},
+		{"regression nginx not redis", model.Item{IP: "1.1.1.1", Port: 80, Banner: "HTTP/1.1 200 OK\r\nServer: nginx\r\nContent-Type: text/plain\r\n\r\nredis_version:7.4.0"}, "HTTP", "nginx", "", ""},
+		{"smtp postfix", model.Item{IP: "1.1.1.2", Port: 25, Banner: "220 mail.example.com ESMTP Postfix"}, "SMTP", "Postfix", "", ""},
+		{"smtp exim", model.Item{IP: "1.1.1.3", Port: 587, Banner: "220 mail.example.com ESMTP Exim 4.96"}, "SMTP", "Exim", "4.96", ""},
+		{"smtp sendmail", model.Item{IP: "1.1.1.4", Port: 25, Banner: "220 mail.example.com ESMTP Sendmail 8.15.2/8.15.2"}, "SMTP", "Sendmail", "8.15.2", ""},
+		{"smtp generic", model.Item{IP: "1.1.1.9", Port: 587, Banner: "220 mail.example.com ESMTP"}, "SMTP", "", "", ""},
+		{"binary mysql false positive", model.Item{IP: "1.1.1.5", Port: 443, Banner: "\u0000\u00009.9.9\u0000"}, "unknown", "", "", ""},
+		{"bare version false positive", model.Item{IP: "1.1.1.6", Port: 9000, Banner: "1.2.3"}, "unknown", "", "", ""},
+		{"redis err wrong port", model.Item{IP: "1.1.1.7", Port: 80, Banner: "-ERR wrong number of arguments for 'get' command"}, "unknown", "", "", ""},
+		{"resp array wrong port", model.Item{IP: "1.1.1.8", Port: 8080, Banner: "*12 items"}, "unknown", "", "", ""},
+		{"redis info anchored", model.Item{IP: "1.1.1.10", Port: 6379, Banner: "# Server\r\nredis_version:7.0.11\r\nredis_mode:standalone\r\n"}, "Redis", "Redis", "7.0.11", ""},
+		{"redis info bare line on redis port", model.Item{IP: "1.1.1.11", Port: 6379, Banner: "redis_version:6.2.14\r\n"}, "Redis", "Redis", "6.2.14", ""},
+		{"ftp product on nonstandard port", model.Item{IP: "1.1.1.12", Port: 9999, Banner: "220 ProFTPD 1.3.7 Server (ProFTPD)"}, "FTP", "ProFTPD", "1.3.7", ""},
+		{"mysql structured version on nonstandard port", model.Item{IP: "1.1.1.13", Port: 13306, Banner: "J\x00\x00\x00\n8.0.32\x00"}, "MySQL", "MySQL", "8.0.32", ""},
 	}
 
 	for _, tc := range cases {

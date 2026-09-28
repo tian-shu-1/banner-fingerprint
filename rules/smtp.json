@@ -1,0 +1,41 @@
+{
+  "rules": [
+    {
+      "id": "smtp-postfix",
+      "protocol": "SMTP",
+      "product": "Postfix",
+      "priority": 103,
+      "ports": [25, 465, 587, 2525],
+      "pattern": "(?im)^220[ -].*?ESMTP\\s+Postfix(?:\\s+(?P<version>[0-9][0-9A-Za-z.\\-]*))?",
+      "confidence": 0.85
+    },
+    {
+      "id": "smtp-exim",
+      "protocol": "SMTP",
+      "product": "Exim",
+      "priority": 103,
+      "ports": [25, 465, 587, 2525],
+      "pattern": "(?im)^220[ -].*?ESMTP\\s+Exim(?:\\s+(?P<version>[0-9][0-9A-Za-z.\\-]*))?",
+      "confidence": 0.85
+    },
+    {
+      "id": "smtp-sendmail",
+      "protocol": "SMTP",
+      "product": "Sendmail",
+      "priority": 102,
+      "ports": [25, 465, 587, 2525],
+      "pattern": "(?im)^220[ -].*?ESMTP\\s+Sendmail(?:\\s+(?P<version>[0-9][0-9A-Za-z.\\-]*))?",
+      "confidence": 0.85
+    },
+    {
+      "id": "smtp-generic",
+      "protocol": "SMTP",
+      "product": "",
+      "priority": 90,
+      "ports": [25, 465, 587, 2525],
+      "port_required": true,
+      "pattern": "(?im)^220[ -].*?(?:ESMTP|SMTP)",
+      "confidence": 0.7
+    }
+  ]
+}

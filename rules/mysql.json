@@ -15,7 +15,7 @@
       "product": "MySQL",
       "priority": 120,
       "ports": [3306, 3307],
-      "pattern": "(?s)\\x00+\\n?(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)(?:\\x00|$|-)",
+      "pattern": "(?s)\\x00{1,8}\\n(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)(?:\\x00|$|-)",
       "confidence": 0.9
     },
     {
@@ -24,6 +24,7 @@
       "product": "MySQL",
       "priority": 70,
       "ports": [3306, 3307],
+      "port_required": true,
       "pattern": "(?s)^(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)(?:\\x00|\\n|$)",
       "confidence": 0.85
     },
@@ -33,6 +34,7 @@
       "product": "MySQL",
       "priority": 25,
       "ports": [3306, 3307],
+      "port_required": true,
       "pattern": "(?s)^J\\x00",
       "confidence": 0.7
     }

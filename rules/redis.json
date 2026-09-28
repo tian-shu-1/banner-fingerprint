@@ -4,9 +4,9 @@
       "id": "redis-version",
       "protocol": "Redis",
       "product": "Redis",
-      "priority": 115,
+      "priority": 100,
       "ports": [6379, 6380],
-      "pattern": "(?im)redis_version:(?P<version>[0-9]+\\.[0-9]+(?:\\.[0-9]+)?)",
+      "pattern": "(?ms)^# Server\\r?\\n.*?^redis_version:(?P<version>[0-9]+\\.[0-9]+(?:\\.[0-9]+)?)",
       "confidence": 0.95
     },
     {
@@ -15,6 +15,7 @@
       "product": "Redis",
       "priority": 90,
       "ports": [6379, 6380],
+      "port_required": true,
       "patterns": [
         "(?m)^\\+PONG",
         "(?m)^-NOAUTH",
@@ -23,6 +24,16 @@
         "(?m)^\\*[0-9]+"
       ],
       "confidence": 0.7
+    },
+    {
+      "id": "redis-info-line",
+      "protocol": "Redis",
+      "product": "Redis",
+      "priority": 88,
+      "ports": [6379, 6380],
+      "port_required": true,
+      "pattern": "(?m)^redis_version:(?P<version>[0-9]+\\.[0-9]+(?:\\.[0-9]+)?)",
+      "confidence": 0.85
     }
   ]
 }

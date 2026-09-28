@@ -46,7 +46,7 @@ server 默认只发布到 `127.0.0.1:8080`。如需在所有网卡上暴露端�
 server 和规则都正常加载时返回 HTTP 200。
 
 ```json
-{"status":"ok","version":"1.0.0","rules_loaded":24,"uptime_s":12}
+{"status":"ok","version":"1.0.0","rules_loaded":29,"uptime_s":12}
 ```
 
 ### `POST /fingerprint`
@@ -88,13 +88,17 @@ curl -X POST http://127.0.0.1:8080/fingerprint \
 - MySQL：MySQL 和 MariaDB（`5.5.5-10.11.2-MariaDB` 识别为 MariaDB `10.11.2`）
 - Redis：`+PONG`、`-NOAUTH`、`-ERR`、`$-1`、RESP 数组，以及 `redis_version:` INFO 输出
 - FTP：ProFTPD、vsFTPd、Pure-FTPd、FileZilla Server、Microsoft FTP
+- SMTP：Postfix、Exim、Sendmail，以及通用 ESMTP/SMTP 问候规则
 - TLS：把 TLS 握手记录识别为协议级线索
 
 每个必需协议都还有一条低优先级协议兜底规则。因此即使产品名未知，也会返回正确
 协议，而不是直接落到 `unknown`。
 
-端口只是提示，不是匹配门槛。nginx 在 8443、Redis 在非标准端口、SSH 在 2222
-仍然可以通过 banner 特征匹配；端口匹配只用于优先级相同时的裁决。
+产品级规则不依赖端口：nginx 在 8443、ProFTPD 在 9999、结构化 MySQL 握手在
+13306 仍然可以匹配。低置信度的协议兜底规则（`ftp-protocol`、`smtp-generic`、
+`redis-generic`、`mysql-bare-version`、`mysql-fallback`）设置
+`port_required: true`，因此通用 `220` 问候、裸 RESP 标记或裸版本号只会在预期
+端口上被接受；产品级规则中，命中首选端口只用于优先级相同时的裁决。
 
 ## 规则与代码解耦
 
@@ -114,7 +118,8 @@ curl -X POST http://127.0.0.1:8080/fingerprint \
 ```
 
 规则选择顺序为：优先级最高者优先，其次是首选端口匹配，最后按文件中的顺序。
-每条规则使用第一个命中的正则。
+每条规则使用第一个命中的正则。匹配前会先检查 `port_required`：设置为 `true`
+且当前端口不在 `ports` 中时直接跳过；该字段只用于低置信度的协议兜底规则。
 
 Compose 中的 server 会把 `./rules` 以只读方式挂载到 `/etc/bannerfp/rules`，
 因此修改规则后重启即可：
@@ -163,7 +168,8 @@ go run ./cmd/server -listen :8080 -rules ./rules
 go run ./cmd/client -input ./examples/input.json -server http://127.0.0.1:8080
 ```
 
-引擎测试覆盖题目全部 20 条示例、协议兜底、MariaDB，以及严格/容错 JSON 解析。
+引擎测试覆盖题目全部 20 条示例、协议兜底、MariaDB、严格/容错 JSON 解析，以及
+`examples/regression_probes.json` 中的误报回归探针。
 
 ## 已知取舍
 

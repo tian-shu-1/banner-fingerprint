@@ -51,6 +51,7 @@
       "product": "",
       "priority": 20,
       "ports": [21, 2121],
+      "port_required": true,
       "pattern": "(?im)^220[ -]",
       "confidence": 0.6
     }

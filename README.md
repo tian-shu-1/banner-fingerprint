@@ -47,7 +47,7 @@ interfaces, set `SERVER_BIND=0.0.0.0` before `docker compose up`.
 Returns HTTP 200 when the server and its rules are loaded.
 
 ```json
-{"status":"ok","version":"1.0.0","rules_loaded":24,"uptime_s":12}
+{"status":"ok","version":"1.0.0","rules_loaded":29,"uptime_s":12}
 ```
 
 ### `POST /fingerprint`
@@ -90,14 +90,19 @@ Product-level rules cover:
 - MySQL: MySQL and MariaDB (`5.5.5-10.11.2-MariaDB` is reported as MariaDB `10.11.2`)
 - Redis: `+PONG`, `-NOAUTH`, `-ERR`, `$-1`, RESP arrays, and `redis_version:` INFO output
 - FTP: ProFTPD, vsFTPd, Pure-FTPd, FileZilla Server, Microsoft FTP
+- SMTP: Postfix, Exim, Sendmail, plus a generic ESMTP/SMTP greeting rule
 - TLS: TLS handshake record as a protocol-level hint
 
 Every required protocol also has a low-priority protocol fallback, so an
 unknown product still returns the correct protocol instead of `unknown`.
 
-Ports are hints, not gates. nginx on 8443, Redis on a non-standard port and
-SSH on 2222 still match through their banner patterns; a matching preferred
-port only breaks a priority tie.
+Product rules are port-agnostic: nginx on 8443, a ProFTPD banner on 9999 and a
+structured MySQL handshake on 13306 still match. Low-confidence protocol
+fallbacks (`ftp-protocol`, `smtp-generic`, `redis-generic`,
+`mysql-bare-version`, `mysql-fallback`) set `port_required: true`, so a generic
+`220` greeting, a bare RESP token or a bare version string is only accepted on
+its expected ports. For product rules, a matching preferred port only breaks a
+priority tie.
 
 ## Rules and decoupling
 
@@ -118,7 +123,9 @@ Adding a product or changing a version regex does not require a Go change.
 ```
 
 Rule selection is: highest priority, then a preferred-port tie-break, then file
-order. A rule's first matching pattern is used.
+order. A rule's first matching pattern is used. `port_required: true` is
+checked before matching and is intended only for low-confidence protocol
+fallbacks.
 
 The Compose server mounts `./rules` read-only over `/etc/bannerfp/rules`, so a
 rule change is a restart:
@@ -173,8 +180,9 @@ go run ./cmd/server -listen :8080 -rules ./rules
 go run ./cmd/client -input ./examples/input.json -server http://127.0.0.1:8080
 ```
 
-The engine tests cover all 20 example records, protocol fallbacks, MariaDB and
-strict/lenient JSON parsing.
+The engine tests cover all 20 example records, protocol fallbacks, MariaDB,
+strict/lenient JSON parsing, and the false-positive regression probes in
+`examples/regression_probes.json`.
 
 ## Known tradeoffs
 

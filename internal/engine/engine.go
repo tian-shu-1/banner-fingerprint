@@ -19,14 +19,15 @@ import (
 // extraction: product, version and os. A static product field wins over a
 // captured product value.
 type Rule struct {
-	ID         string   `json:"id"`
-	Protocol   string   `json:"protocol"`
-	Product    string   `json:"product"`
-	Pattern    string   `json:"pattern"`
-	Patterns   []string `json:"patterns"`
-	Priority   int      `json:"priority"`
-	Confidence float64  `json:"confidence"`
-	Ports      []int    `json:"ports"`
+	ID           string   `json:"id"`
+	Protocol     string   `json:"protocol"`
+	Product      string   `json:"product"`
+	Pattern      string   `json:"pattern"`
+	Patterns     []string `json:"patterns"`
+	Priority     int      `json:"priority"`
+	Confidence   float64  `json:"confidence"`
+	Ports        []int    `json:"ports"`
+	PortRequired bool     `json:"port_required"`
 }
 
 type ruleFile struct {
@@ -117,6 +118,9 @@ func validateRule(rule Rule) error {
 	if rule.Confidence <= 0 || rule.Confidence > 1 {
 		return fmt.Errorf("rule %s: confidence must be in (0,1]", rule.ID)
 	}
+	if rule.PortRequired && len(rule.Ports) == 0 {
+		return fmt.Errorf("rule %s: port_required needs a non-empty ports list", rule.ID)
+	}
 	return nil
 }
 
@@ -146,6 +150,9 @@ func (e *Engine) Fingerprint(item model.Item) (res model.Result) {
 	var best *candidate
 	for i := range e.rules {
 		cr := &e.rules[i]
+		if cr.rule.PortRequired && !containsInt(cr.rule.Ports, item.Port) {
+			continue
+		}
 		for _, re := range cr.regexps {
 			subs := re.FindStringSubmatch(item.Banner)
 			if subs == nil {
