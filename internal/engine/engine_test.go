@@ -52,6 +52,8 @@ func TestFingerprintExamples(t *testing.T) {
 		{"http protocol fallback", model.Item{IP: "1.2.3.31", Port: 8080, Banner: "HTTP/1.1 200 OK\r\nContent-Length: 0"}, "HTTP", "", "", ""},
 		{"ftp protocol fallback", model.Item{IP: "1.2.3.32", Port: 2121, Banner: "220 Service ready"}, "FTP", "", "", ""},
 		{"mariadb", model.Item{IP: "1.2.3.33", Port: 3306, Banner: "J\x00\x00\x00\n5.5.5-10.11.2-MariaDB-1:10.11.2+maria~ubu2204\x00"}, "MySQL", "MariaDB", "10.11.2", ""},
+		{"openssh windows", model.Item{IP: "1.2.3.34", Port: 22, Banner: "SSH-2.0-OpenSSH_for_Windows_8.1"}, "SSH", "OpenSSH", "8.1", "Windows"},
+		{"mysql bare version", model.Item{IP: "1.2.3.35", Port: 3306, Banner: "8.0.36\x00"}, "MySQL", "MySQL", "8.0.36", ""},
 	}
 
 	for _, tc := range cases {
