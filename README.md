@@ -1,5 +1,7 @@
 # Banner Fingerprint
 
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 Go service for turning raw `(ip, port, banner)` records into protocol, product,
 version and OS hints. It ships as a server + client pair and starts with one
 Docker Compose command.
