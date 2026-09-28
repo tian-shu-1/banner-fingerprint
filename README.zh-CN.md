@@ -15,6 +15,10 @@ docker compose up --build
 client 会等待 server 健康检查通过，读取 `examples/input.json`，把批量数据发送到
 `POST /fingerprint`，打印 JSON 识别结果后退出。server 会继续运行。
 
+`examples/input.json` 刻意保留题目原文的 `\xNN` 转义，因此默认启动也会走一遍
+兼容解析，client 会打印容错警告。同一批数据的严格 JSON 版本放在
+`examples/input_valid.json`。
+
 常用变体：
 
 ```bash
@@ -78,6 +82,10 @@ curl -X POST http://127.0.0.1:8080/fingerprint \
   -H 'Content-Type: application/json' \
   --data-binary @examples/input.json
 ```
+
+由于 `examples/input.json` 使用原始 `\x` 转义，这个请求会返回
+`X-Parse-Mode: lenient`。如需验证严格解析路径，请改用
+`examples/input_valid.json`。
 
 ## 识别范围
 
@@ -145,6 +153,9 @@ JSON 转义。服务会先严格解析；只有严格解析失败时，才把 `\
 使用兼容路径时，server 会在响应中增加 `X-Parse-Mode: lenient` 并记录警告日志；
 client 也会向 stderr 输出警告。
 
+默认的 `examples/input.json` 刻意使用这种原始格式；`examples/input_valid.json`
+是同一批 20 条数据的严格 JSON 版本。
+
 ## Docker 与安全设计
 
 - 多阶段构建：`golang:1.25.0-bookworm` 编译静态二进制，运行镜像使用 `scratch`。
@@ -165,11 +176,14 @@ client 也会向 stderr 输出警告。
 go test ./...
 go vet ./...
 go run ./cmd/server -listen :8080 -rules ./rules
-go run ./cmd/client -input ./examples/input.json -server http://127.0.0.1:8080
+go run ./cmd/client -input ./examples/input.json -server http://127.0.0.1:8080       # 走容错路径
+go run ./cmd/client -input ./examples/input_valid.json -server http://127.0.0.1:8080
 ```
 
 引擎测试覆盖题目全部 20 条示例、协议兜底、MariaDB、严格/容错 JSON 解析，以及
-`examples/regression_probes.json` 中的误报回归探针。
+`examples/regression_probes.json` 中的误报回归探针。client 测试还断言默认
+`examples/input.json` 走容错路径且包含 20 条数据，`examples/input_valid.json`
+走严格解析路径。
 
 ## 已知取舍
 

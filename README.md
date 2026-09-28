@@ -16,6 +16,11 @@ The client waits for the server healthcheck, reads `examples/input.json`, sends
 the batch to `POST /fingerprint`, prints the JSON result and exits. The server
 keeps running.
 
+`examples/input.json` intentionally keeps the task's original `\xNN` escapes,
+so the default run also exercises the compatibility parser and the client
+prints a warning. A strict-JSON copy with the same records is available at
+`examples/input_valid.json`.
+
 Useful variants:
 
 ```bash
@@ -80,6 +85,10 @@ curl -X POST http://127.0.0.1:8080/fingerprint \
   -H 'Content-Type: application/json' \
   --data-binary @examples/input.json
 ```
+
+Because `examples/input.json` uses the original raw escapes, this request
+returns `X-Parse-Mode: lenient`. Use `examples/input_valid.json` to exercise the
+strict path.
 
 ## Recognition coverage
 
@@ -154,6 +163,10 @@ When the compatibility path is used, the server adds
 `X-Parse-Mode: lenient` to the response and logs a warning. The client prints a
 warning to stderr as well.
 
+The default `examples/input.json` intentionally uses this raw format;
+`examples/input_valid.json` is the strict-JSON equivalent with the same 20
+records.
+
 ## Docker and security decisions
 
 - Multi-stage build: `golang:1.25.0-bookworm` compiles a static binary, then
@@ -177,12 +190,15 @@ warning to stderr as well.
 go test ./...
 go vet ./...
 go run ./cmd/server -listen :8080 -rules ./rules
-go run ./cmd/client -input ./examples/input.json -server http://127.0.0.1:8080
+go run ./cmd/client -input ./examples/input.json -server http://127.0.0.1:8080       # lenient warning
+go run ./cmd/client -input ./examples/input_valid.json -server http://127.0.0.1:8080
 ```
 
 The engine tests cover all 20 example records, protocol fallbacks, MariaDB,
 strict/lenient JSON parsing, and the false-positive regression probes in
-`examples/regression_probes.json`.
+`examples/regression_probes.json`. The client tests assert that the default
+`examples/input.json` exercises the lenient path with 20 records and that
+`examples/input_valid.json` parses strictly.
 
 ## Known tradeoffs
 
