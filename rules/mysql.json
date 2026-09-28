@@ -1,0 +1,31 @@
+{
+  "rules": [
+    {
+      "id": "mysql-mariadb",
+      "protocol": "MySQL",
+      "product": "MariaDB",
+      "priority": 130,
+      "ports": [3306],
+      "pattern": "(?s)\\x00+\\n?5\\.5\\.5-(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)-MariaDB",
+      "confidence": 0.95
+    },
+    {
+      "id": "mysql-version",
+      "protocol": "MySQL",
+      "product": "MySQL",
+      "priority": 120,
+      "ports": [3306, 3307],
+      "pattern": "(?s)\\x00+\\n?(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)(?:\\x00|$|-)",
+      "confidence": 0.9
+    },
+    {
+      "id": "mysql-fallback",
+      "protocol": "MySQL",
+      "product": "MySQL",
+      "priority": 25,
+      "ports": [3306, 3307],
+      "pattern": "(?s)^J\\x00",
+      "confidence": 0.7
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "rules": [
+    {
+      "id": "redis-version",
+      "protocol": "Redis",
+      "product": "Redis",
+      "priority": 115,
+      "ports": [6379, 6380],
+      "pattern": "(?im)redis_version:(?P<version>[0-9]+\\.[0-9]+(?:\\.[0-9]+)?)",
+      "confidence": 0.95
+    },
+    {
+      "id": "redis-generic",
+      "protocol": "Redis",
+      "product": "Redis",
+      "priority": 90,
+      "ports": [6379, 6380],
+      "patterns": [
+        "(?m)^\\+PONG",
+        "(?m)^-NOAUTH",
+        "(?m)^-ERR",
+        "(?m)^\\$-1",
+        "(?m)^\\*[0-9]+"
+      ],
+      "confidence": 0.7
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "rules": [
+    {
+      "id": "ssh-openssh",
+      "protocol": "SSH",
+      "product": "OpenSSH",
+      "priority": 110,
+      "ports": [22],
+      "pattern": "(?im)^SSH-[0-9]+\\.[0-9]+-OpenSSH_(?P<version>[^\\s]+)(?:\\s+(?P<os>Ubuntu|Debian|CentOS|Red Hat|FreeBSD|Alpine|SUSE|openSUSE|Gentoo|Arch))?",
+      "confidence": 0.95
+    },
+    {
+      "id": "ssh-dropbear",
+      "protocol": "SSH",
+      "product": "Dropbear",
+      "priority": 108,
+      "ports": [22],
+      "pattern": "(?im)^SSH-[0-9]+\\.[0-9]+-[Dd]ropbear[ _]?(?P<version>[^\\s]+)?",
+      "confidence": 0.9
+    },
+    {
+      "id": "ssh-cisco",
+      "protocol": "SSH",
+      "product": "Cisco SSH",
+      "priority": 106,
+      "ports": [22],
+      "pattern": "(?im)^SSH-[0-9]+\\.[0-9]+-Cisco(?:[ _](?P<version>[^\\s]+))?",
+      "confidence": 0.85
+    },
+    {
+      "id": "ssh-protocol",
+      "protocol": "SSH",
+      "product": "",
+      "priority": 20,
+      "ports": [22, 2222],
+      "pattern": "(?im)^SSH-[0-9]+\\.[0-9]+-",
+      "confidence": 0.6
+    }
+  ]
+}

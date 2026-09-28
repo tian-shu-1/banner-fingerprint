@@ -1,0 +1,61 @@
+{
+  "rules": [
+    {
+      "id": "http-nginx",
+      "protocol": "HTTP",
+      "product": "nginx",
+      "priority": 105,
+      "ports": [80, 443, 8080, 8443],
+      "pattern": "(?im)^Server:\\s*nginx/(?P<version>[0-9][0-9A-Za-z.\\-]*)(?:\\s+\\((?P<os>[^)]+)\\))?",
+      "confidence": 0.9
+    },
+    {
+      "id": "http-apache",
+      "protocol": "HTTP",
+      "product": "Apache",
+      "priority": 104,
+      "ports": [80, 443, 8080, 8443],
+      "pattern": "(?im)^Server:\\s*Apache/(?P<version>[0-9][0-9A-Za-z.\\-]*)(?:\\s+\\((?P<os>[^)]+)\\))?",
+      "confidence": 0.9
+    },
+    {
+      "id": "http-jetty",
+      "protocol": "HTTP",
+      "product": "Jetty",
+      "priority": 103,
+      "ports": [8080, 8443],
+      "pattern": "(?im)^Server:\\s*Jetty[/ ]?(?P<version>[0-9][0-9A-Za-z.\\-]*)",
+      "confidence": 0.85
+    },
+    {
+      "id": "http-iis",
+      "protocol": "HTTP",
+      "product": "Microsoft-IIS",
+      "priority": 102,
+      "ports": [80, 443, 8080, 8443],
+      "pattern": "(?im)^Server:\\s*Microsoft-IIS/(?P<version>[0-9][0-9A-Za-z.\\-]*)",
+      "confidence": 0.9
+    },
+    {
+      "id": "http-generic-server",
+      "protocol": "HTTP",
+      "product": "",
+      "priority": 80,
+      "ports": [80, 443, 8080, 8443],
+      "pattern": "(?im)^Server:\\s*(?P<product>[A-Za-z0-9_.+\\-]+)(?:/(?P<version>[0-9][0-9A-Za-z._\\-]*))?",
+      "confidence": 0.75
+    },
+    {
+      "id": "http-protocol",
+      "protocol": "HTTP",
+      "product": "",
+      "priority": 20,
+      "ports": [80, 443, 8080, 8443],
+      "patterns": [
+        "(?im)^HTTP/[0-9]",
+        "(?im)^PRI \\* HTTP/2\\.0"
+      ],
+      "confidence": 0.6
+    }
+  ]
+}

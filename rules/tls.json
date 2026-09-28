@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "id": "tls-record",
+      "protocol": "TLS",
+      "product": "",
+      "priority": 30,
+      "pattern": "(?s)^\\x16\\x03[\\x00-\\x04]",
+      "confidence": 0.6
+    }
+  ]
+}

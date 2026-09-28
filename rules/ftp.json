@@ -1,0 +1,58 @@
+{
+  "rules": [
+    {
+      "id": "ftp-proftpd",
+      "protocol": "FTP",
+      "product": "ProFTPD",
+      "priority": 100,
+      "ports": [21, 2121],
+      "pattern": "(?im)^220[ -].*?ProFTPD(?:[ /](?P<version>[0-9][0-9A-Za-z.\\-]*))?",
+      "confidence": 0.9
+    },
+    {
+      "id": "ftp-vsftpd",
+      "protocol": "FTP",
+      "product": "vsFTPd",
+      "priority": 100,
+      "ports": [21, 2121],
+      "pattern": "(?im)^220[ -].*?\\(?vsFTPd[ /](?P<version>[0-9][0-9A-Za-z.\\-]*)\\)?",
+      "confidence": 0.9
+    },
+    {
+      "id": "ftp-pure",
+      "protocol": "FTP",
+      "product": "Pure-FTPd",
+      "priority": 95,
+      "ports": [21, 2121],
+      "pattern": "(?im)^220[ -].*?Pure-FTPd(?:[ /](?P<version>[0-9][0-9A-Za-z.\\-]*))?",
+      "confidence": 0.85
+    },
+    {
+      "id": "ftp-filezilla",
+      "protocol": "FTP",
+      "product": "FileZilla Server",
+      "priority": 95,
+      "ports": [21, 2121],
+      "pattern": "(?im)^220[ -].*?FileZilla Server(?: version (?P<version>[0-9][0-9A-Za-z.\\-]*))?",
+      "confidence": 0.85
+    },
+    {
+      "id": "ftp-microsoft",
+      "protocol": "FTP",
+      "product": "Microsoft FTP",
+      "priority": 95,
+      "ports": [21, 2121],
+      "pattern": "(?im)^220[ -].*?Microsoft FTP Service",
+      "confidence": 0.85
+    },
+    {
+      "id": "ftp-protocol",
+      "protocol": "FTP",
+      "product": "",
+      "priority": 20,
+      "ports": [21, 2121],
+      "pattern": "(?im)^220[ -]",
+      "confidence": 0.6
+    }
+  ]
+}
